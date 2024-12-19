@@ -73,7 +73,7 @@ class GameObject:
 class Apple(GameObject):
     """Класс для яблока."""
 
-    def __init__(self):
+    def __init__(self, occupied_positions=None):
         """
         Инициализирует объект класса Apple.
 
@@ -83,6 +83,11 @@ class Apple(GameObject):
         super().__init__()
         self.body_color = APPLE_COLOR
         self.position = None
+        # Если occupied_positions не передан, создаем пустое множество
+        if occupied_positions is None:
+            occupied_positions = set()
+
+        self.randomize_position(occupied_positions)  # начальная позиция
 
     def randomize_position(self, occupied_positions):
         """Генерируем случайную позицию для яблока."""
@@ -106,6 +111,11 @@ class Snake(GameObject):
     """Класс для змейки."""
 
     def __init__(self):
+        """
+        Инициализирует змейку с начальными параметрами.
+
+        Длина = 1, начальная позиция = центр экрана, направление = вправо.
+        """
         super().__init__()
         self.length = 1
         self.positions = [self.position]
@@ -132,6 +142,8 @@ class Snake(GameObject):
 
         if len(self.positions) > self.length:
             self.last = self.positions.pop()
+        else:
+            self.last = None
 
     def update_direction(self):
         """Обновление направление движения змейки."""
@@ -191,8 +203,8 @@ def main():
     pygame.init()
 
     # Создание объектов игры:
-    apple = Apple()
     snake = Snake()
+    apple = Apple(occupied_positions=set(snake.positions))
 
     # Первичная генерация позиции яблока
     apple.randomize_position(set(snake.positions))
